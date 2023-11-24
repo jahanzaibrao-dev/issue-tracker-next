@@ -1,17 +1,30 @@
 "use client";
 import { Button, Card, TextArea, TextField } from "@radix-ui/themes";
-import React from "react";
+import SimpleMDE from "react-simplemde-editor";
+import "easymde/dist/easymde.min.css";
+
+import React, { useState } from "react";
 
 const NewIssuePage = () => {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
   return (
-    <Card className="shadow-lg p-5 max-w-xl justify-self-center">
+    <Card className="shadow-lg p-5 max-w-xl">
       <div className="space-y-5">
         <TextField.Root>
-          <TextField.Input placeholder="Title of the issue"></TextField.Input>
+          <TextField.Input
+            size="3"
+            value={title}
+            placeholder="Title of the issue"
+          ></TextField.Input>
         </TextField.Root>
-
-        <TextArea placeholder="Describe the issue here..." />
-        <Button size="3">Submit</Button>
+        <SimpleMDE
+          value={description}
+          placeholder="Describe the issue here..."
+          onChange={(value) => setDescription(value)}
+        />
+        <Button size="3">Submit New Issue</Button>
       </div>
     </Card>
   );
