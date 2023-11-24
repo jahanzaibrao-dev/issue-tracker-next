@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createIssueValidation } from "../validations";
+import { createIssueValidation } from "../../validations";
 import { IssueController } from "./controller";
 
 const controller = new IssueController();
