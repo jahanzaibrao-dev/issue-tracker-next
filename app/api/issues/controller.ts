@@ -12,4 +12,10 @@ export class IssueController {
 
     return newIssue;
   };
+
+  getAllIssues = async () => {
+    const issues = prisma.issue.findMany({ orderBy: { createdAt: "desc" } });
+
+    return issues;
+  };
 }
