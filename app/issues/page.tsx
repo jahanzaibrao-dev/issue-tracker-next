@@ -6,6 +6,7 @@ import Link from "next/link";
 import axios from "axios";
 import Loader from "../components/Loader";
 import IssueCard from "../components/IssueCard";
+import { deleteIssue, getAllIssues } from "../services/issue";
 
 const IssuesPage = () => {
   const [issues, setIssues] = useState([]);
@@ -18,11 +19,25 @@ const IssuesPage = () => {
   const getIssues = async () => {
     setLoader(true);
     try {
-      const response = await axios.get("/api/issues");
+      const response = await getAllIssues();
       if (response.data) {
         setIssues(response.data);
       }
       setLoader(false);
+    } catch (e) {
+      setLoader(false);
+    }
+  };
+
+  const delIssue = async (id: number) => {
+    setLoader(true);
+    try {
+      const response = await deleteIssue(id);
+      if (response.data) {
+        getIssues();
+      } else {
+        setLoader(false);
+      }
     } catch (e) {
       setLoader(false);
     }
@@ -40,7 +55,7 @@ const IssuesPage = () => {
       {issues.length > 0 && (
         <div className="space-y-10 w-full items-center">
           {issues.map((issue) => (
-            <IssueCard item={issue} />
+            <IssueCard item={issue} onDeleteItem={delIssue} />
           ))}
         </div>
       )}

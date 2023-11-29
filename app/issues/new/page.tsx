@@ -13,8 +13,9 @@ import { z } from "zod";
 import ErrorMessage from "@/app/components/ErrorMessage";
 import Loader from "@/app/components/Loader";
 import { useRouter } from "next/navigation";
+import { createIssue } from "@/app/services/issue";
 
-type IssueForm = z.infer<typeof createIssueValidation>;
+export type IssueForm = z.infer<typeof createIssueValidation>;
 
 const NewIssuePage = () => {
   const {
@@ -38,7 +39,7 @@ const NewIssuePage = () => {
   const submitIssue = async (data: IssueForm) => {
     setLoader(true);
     try {
-      const response = await axios.post("/api/issues", data);
+      const response = await createIssue(data);
       setLoader(false);
       Swal.fire({
         position: "center",
