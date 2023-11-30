@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Card, Flex, Text } from "@radix-ui/themes";
+import { Badge, Box, Card, Flex, Text } from "@radix-ui/themes";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
@@ -6,13 +6,16 @@ import remarkGfm from "remark-gfm";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import DialogButton from "./DialogButton";
+import EditIssueForm from "./EditIssueForm";
+import { IssueStatus } from "../api/issues/types";
+import { getBadgeColor } from "./utils";
 
 interface IssueCardItem {
   item: {
     title: string;
     id: number;
     description: string;
-    status: "Open" | "In_Progress" | "Resolved";
+    status: IssueStatus;
     createdAt: String;
     updatedAt: string;
   };
@@ -20,14 +23,6 @@ interface IssueCardItem {
 }
 
 const IssueCard = ({ item, onDeleteItem }: IssueCardItem) => {
-  const getBadgeColor = (status: string) => {
-    return status === "In_Progress"
-      ? "orange"
-      : status === "Resolved"
-      ? "green"
-      : "blue";
-  };
-
   return (
     <Card className="shadow-lg hover:shadow-lg hover:shadow-purple-400 p-5 max-w-3xl m-auto">
       <Box className="space-y-3">
@@ -53,7 +48,10 @@ const IssueCard = ({ item, onDeleteItem }: IssueCardItem) => {
             cancelButtonText="Cancel"
             confirmButtonText="Save Changes"
             onConfirm={() => console.log("save button clicked")}
-          />
+            dialogMaxWidth={500}
+          >
+            <EditIssueForm item={item} />
+          </DialogButton>
           <DialogButton
             title="Delete Issue"
             description="Are you sure that you want to delete This issue?"

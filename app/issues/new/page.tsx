@@ -1,6 +1,5 @@
 "use client";
 import { Button, Callout, Card, TextField } from "@radix-ui/themes";
-import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import Swal from "sweetalert2";
 import React, { useEffect, useState } from "react";
@@ -14,6 +13,10 @@ import ErrorMessage from "@/app/components/ErrorMessage";
 import Loader from "@/app/components/Loader";
 import { useRouter } from "next/navigation";
 import { createIssue } from "@/app/services/issue";
+import dynamic from "next/dynamic";
+const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
+  ssr: false,
+});
 
 export type IssueForm = z.infer<typeof createIssueValidation>;
 

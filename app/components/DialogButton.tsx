@@ -9,6 +9,7 @@ interface dialogButtonProps {
   cancelButtonText: string;
   confirmButtonText: string;
   onConfirm: CallableFunction;
+  dialogMaxWidth?: number;
 }
 
 const DialogButton = ({
@@ -19,6 +20,7 @@ const DialogButton = ({
   cancelButtonText,
   confirmButtonText,
   onConfirm,
+  dialogMaxWidth,
 }: dialogButtonProps) => {
   return (
     <Dialog.Root>
@@ -26,7 +28,7 @@ const DialogButton = ({
         <Button>{buttonContent}</Button>
       </Dialog.Trigger>
 
-      <Dialog.Content style={{ maxWidth: 450 }}>
+      <Dialog.Content style={{ maxWidth: dialogMaxWidth || 450 }}>
         <Dialog.Title>{title}</Dialog.Title>
         <Dialog.Description size="2" mb="4">
           {description}
