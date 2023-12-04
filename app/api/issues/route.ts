@@ -18,3 +18,13 @@ export async function POST(req: NextRequest) {
     NextResponse.error();
   }
 }
+
+export async function GET() {
+  try {
+    const response = await controller.getAllIssues();
+
+    return NextResponse.json(response, { status: 200 });
+  } catch (e) {
+    NextResponse.error();
+  }
+}

@@ -12,6 +12,16 @@
   }
 }
 
+ul {
+  list-style-type: disc;
+  padding: auto;
+}
+
+ol {
+  list-style-type: decimal;
+  padding: auto;
+}
+
 body {
   color: rgb(var(--foreground-rgb));
 }

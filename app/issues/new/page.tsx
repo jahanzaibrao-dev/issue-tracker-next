@@ -1,24 +1,23 @@
 "use client";
-import {
-  Button,
-  Callout,
-  Card,
-  Text,
-  TextArea,
-  TextField,
-} from "@radix-ui/themes";
-import SimpleMDE from "react-simplemde-editor";
+import { Button, Callout, Card, TextField } from "@radix-ui/themes";
 import "easymde/dist/easymde.min.css";
-
+import Swal from "sweetalert2";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import axios from "axios";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createIssueValidation } from "@/app/validations";
 import { z } from "zod";
+import ErrorMessage from "@/app/components/ErrorMessage";
+import Loader from "@/app/components/Loader";
+import { useRouter } from "next/navigation";
+import { createIssue } from "@/app/services/issue";
+import dynamic from "next/dynamic";
+const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
+  ssr: false,
+});
 
-type IssueForm = z.infer<typeof createIssueValidation>;
+export type IssueForm = z.infer<typeof createIssueValidation>;
 
 const NewIssuePage = () => {
   const {
@@ -30,6 +29,8 @@ const NewIssuePage = () => {
     resolver: zodResolver(createIssueValidation),
   });
   const [error, setError] = useState("");
+  const [isLoading, setLoader] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (error) {
@@ -38,56 +39,65 @@ const NewIssuePage = () => {
   }, [error]);
 
   const submitIssue = async (data: IssueForm) => {
+    setLoader(true);
     try {
-      const response = await axios.post("/api/issues", data);
-      alert("issue submitted successfully");
+      const response = await createIssue(data);
+      setLoader(false);
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Issue added Successfully!",
+        showConfirmButton: true,
+        confirmButtonText: "Go to Issues",
+        confirmButtonColor: "purple",
+      }).then((result) => {
+        router.push("/issues");
+      });
     } catch (err: any) {
       const errMessage = err.response.data[0].message;
+      setLoader(false);
       setError(errMessage);
     }
   };
 
   return (
-    <Card className="shadow-lg p-5 max-w-xl">
-      {error && (
-        <Callout.Root className="mb-3">
-          <Callout.Icon>
-            <AiOutlineInfoCircle color="red" />
-          </Callout.Icon>
-          <Callout.Text color="red">{error}</Callout.Text>
-        </Callout.Root>
-      )}
-      <form
-        className="space-y-5"
-        onSubmit={handleSubmit((data) => submitIssue(data))}
-      >
-        <TextField.Root>
-          <TextField.Input
-            size="3"
-            placeholder="Title of the issue"
-            {...register("title")}
-          ></TextField.Input>
-        </TextField.Root>
-        {errors.title && (
-          <Text color="red" as="p">
-            {errors.title.message}
-          </Text>
+    <div>
+      {isLoading && <Loader />}
+      <Card className="shadow-lg p-5 max-w-xl m-auto">
+        {error && (
+          <Callout.Root className="mb-3">
+            <Callout.Icon>
+              <AiOutlineInfoCircle color="red" />
+            </Callout.Icon>
+            <Callout.Text color="red">{error}</Callout.Text>
+          </Callout.Root>
         )}
-        <Controller
-          name="description"
-          control={control}
-          render={({ field }) => (
-            <SimpleMDE placeholder="Describe the issue here..." {...field} />
+        <form
+          className="space-y-5"
+          onSubmit={handleSubmit((data) => submitIssue(data))}
+        >
+          <TextField.Root>
+            <TextField.Input
+              size="3"
+              placeholder="Title of the issue"
+              {...register("title")}
+            ></TextField.Input>
+          </TextField.Root>
+          {errors.title && <ErrorMessage>{errors.title.message}</ErrorMessage>}
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => (
+              <SimpleMDE placeholder="Describe the issue here..." {...field} />
+            )}
+          />
+          {errors.description && (
+            <ErrorMessage>{errors.description.message}</ErrorMessage>
           )}
-        />
-        {errors.description && (
-          <Text color="red" as="p">
-            {errors.description.message}
-          </Text>
-        )}
-        <Button size="3">Submit New Issue</Button>
-      </form>
-    </Card>
+          <Button size="3">Submit New Issue</Button>
+        </form>
+      </Card>
+    </div>
   );
 };
 
