@@ -6,10 +6,15 @@ const controller = new IssueController();
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: number } }
+  { params }: { params: { id: string } }
 ) {
   try {
-    return NextResponse.json({ id: params.id }, { status: 200 });
+    const id = parseInt(params.id);
+    const validation = IssueIdValidation.safeParse({ id });
+    if (!validation.success)
+      return NextResponse.json(validation.error.errors, { status: 400 });
+    const response = await controller.getSingleIssue(id);
+    return NextResponse.json(response, { status: 200 });
   } catch (e) {
     NextResponse.json(e, { status: 403 });
   }

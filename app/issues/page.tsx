@@ -44,9 +44,9 @@ const IssuesPage = () => {
   };
 
   return (
-    <div>
+    <div className="space-y-10">
       {isLoading && <Loader />}
-      <Button size="3">
+      <Button ml="auto" size="3">
         <Link className="flex" href="/issues/new">
           New Issue
         </Link>
@@ -54,8 +54,8 @@ const IssuesPage = () => {
 
       {issues.length > 0 && (
         <div className="space-y-10 w-full items-center">
-          {issues.map((issue) => (
-            <IssueCard item={issue} onDeleteItem={delIssue} />
+          {issues.map((issue: any) => (
+            <IssueCard item={issue} key={issue.id} onDeleteItem={delIssue} />
           ))}
         </div>
       )}

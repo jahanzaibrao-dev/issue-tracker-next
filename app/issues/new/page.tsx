@@ -4,7 +4,6 @@ import "easymde/dist/easymde.min.css";
 import Swal from "sweetalert2";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import axios from "axios";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createIssueValidation } from "@/app/validations";

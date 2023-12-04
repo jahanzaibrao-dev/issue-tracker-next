@@ -21,6 +21,18 @@ export class IssueController {
     return issues;
   };
 
+  getSingleIssue = async (id: number) => {
+    const issue = await prisma.issue.findUnique({ where: { id } });
+
+    if (!issue) {
+      throw {
+        message: "Issue with this id not found",
+      };
+    }
+
+    return issue;
+  };
+
   deleteIssue = async (id: number) => {
     const issue = await prisma.issue.findUnique({ where: { id } });
     if (!issue) {
