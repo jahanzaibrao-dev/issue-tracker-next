@@ -21,3 +21,7 @@ export const getSingleIssue = async (id: string) => {
 export const updateIssue = async (id: string, data: IssueEditForm) => {
   return axios.put(`/api/issues/${id}`, data);
 };
+
+export const getIssueStats = async () => {
+  return axios.get(`/api/issues/stats`);
+};

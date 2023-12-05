@@ -1,5 +1,5 @@
 import prisma from "@/prisma/client";
-import { createIssuePayload, editIssuePayload } from "./types";
+import { IssueStatus, createIssuePayload, editIssuePayload } from "./types";
 
 export class IssueController {
   createIssue = async (body: createIssuePayload) => {
@@ -64,6 +64,24 @@ export class IssueController {
     return {
       message: "Issue updated successfully!",
       issue: updatedIssue,
+    };
+  };
+
+  getStats = async () => {
+    const openIssues = await prisma.issue.count({
+      where: { status: IssueStatus.Open },
+    });
+    const resolvedIssues = await prisma.issue.count({
+      where: { status: IssueStatus.Resolved },
+    });
+    const inProgressIssues = await prisma.issue.count({
+      where: { status: IssueStatus.In_Progress },
+    });
+
+    return {
+      open: openIssues,
+      resolved: resolvedIssues,
+      inProgress: inProgressIssues,
     };
   };
 }
