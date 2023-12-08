@@ -33,6 +33,12 @@ export class IssueController {
     return issue;
   };
 
+  getIssuesOfSpecificStatus = async (status: IssueStatus) => {
+    const issues = await prisma.issue.findMany({ where: { status } });
+
+    return issues;
+  };
+
   deleteIssue = async (id: number) => {
     const issue = await prisma.issue.findUnique({ where: { id } });
     if (!issue) {
