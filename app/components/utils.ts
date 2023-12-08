@@ -18,3 +18,13 @@ export const getBadgeColor = (status: string) => {
     ? "green"
     : "blue";
 };
+
+export interface IssueStats {
+  open: number;
+  resolved: number;
+  inProgress: number;
+}
+
+export const chartLabels = ["Open", "Resolved", "In_Progress"];
+
+export const chartBgColors = ["#5FBDFF", "#9ADE7B", "#EC8F5E"];
