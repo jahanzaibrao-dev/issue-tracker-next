@@ -1,3 +1,4 @@
+import { signOut } from "next-auth/react";
 import { IssueStatus } from "../api/issues/types";
 
 export const navItems = [
@@ -8,6 +9,13 @@ export const navItems = [
   {
     label: "About",
     href: "/about",
+  },
+  {
+    label: "Logout",
+    href: "",
+    onClick: () => {
+      signOut();
+    },
   },
 ];
 

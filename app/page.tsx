@@ -30,7 +30,7 @@ export default function Home() {
     }
   };
   return (
-    <div className=" p-5 flex space-x-40">
+    <div className="p-5 space-y-5">
       {isLoading && <Loader />}
       <PieChart stats={stats} />
       <PolarChart stats={stats} />
