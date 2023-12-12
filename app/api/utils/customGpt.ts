@@ -4,7 +4,9 @@ import {
   ChatCompletionTool,
 } from "openai/resources/index.mjs";
 
-const openai = new OpenAI();
+const openAi = new OpenAI({
+  apiKey: process.env.OPEN_AI_API_KEY,
+});
 
 const tools: ChatCompletionTool[] = [
   {
@@ -27,6 +29,19 @@ const tools: ChatCompletionTool[] = [
   },
 ];
 
+export async function createThread(message: string) {
+  const thread = await openAi.beta.threads.create({
+    messages: [
+      {
+        role: "user",
+        content: message,
+      },
+    ],
+  });
+
+  return thread.id;
+}
+
 export async function DemoChat(message: string) {
   const messages: ChatCompletionMessageParam[] = [
     {
@@ -37,7 +52,7 @@ export async function DemoChat(message: string) {
   ];
 
   messages.push({ role: "user", content: message });
-  const completion = await openai.chat.completions.create({
+  const completion = await openAi.chat.completions.create({
     messages: messages,
     model: "gpt-3.5-turbo",
     tools: tools,

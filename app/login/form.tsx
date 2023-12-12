@@ -6,11 +6,9 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Loader from "../components/Loader";
-import { Button, Callout, TextField } from "@radix-ui/themes";
-import { AiOutlineInfoCircle } from "react-icons/ai";
+import { Button, TextField } from "@radix-ui/themes";
 import ErrorMessage from "../components/ErrorMessage";
 import ErrorCallout from "../components/ErrorCallout";
-import Swal from "sweetalert2";
 import { signIn } from "next-auth/react";
 
 export type LoginUserForm = z.infer<typeof loginValidation>;
@@ -42,10 +40,12 @@ const LoginForm = () => {
         redirect: false,
       });
       setLoader(false);
-      if (!response?.ok) {
+      console.log(response);
+      if (response?.error) {
         setError("Invalid Credentials");
       } else {
         router.push("/");
+        router.refresh();
       }
     } catch (err: any) {
       console.log(err);
