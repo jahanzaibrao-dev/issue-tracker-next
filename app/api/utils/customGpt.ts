@@ -1,62 +1,128 @@
 import OpenAI from "openai";
 import {
-  ChatCompletionMessageParam,
-  ChatCompletionTool,
-} from "openai/resources/index.mjs";
+  MessageContentText,
+  RequiredActionFunctionToolCall,
+  RunSubmitToolOutputsParams,
+} from "openai/resources/beta/threads/index.mjs";
+
+import { IssueController } from "../issues/controller";
 
 const openAi = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,
 });
 
-const tools: ChatCompletionTool[] = [
-  {
-    type: "function",
-    function: {
-      name: "get_x_type_of_issues",
-      description: "Get Issues with status of type x",
-      parameters: {
-        type: "object",
-        properties: {
-          status: {
-            type: "string",
-            description:
-              "The current status of an issue which can be of four types i.e. all, Open, In_Progress and Resolved. If user doesn't provide any of these ask for clarification",
-          },
-        },
-        required: ["status"],
-      },
-    },
-  },
-];
+export async function createThread() {
+  const thread = await openAi.beta.threads.create();
 
-export async function createThread(message: string) {
-  const thread = await openAi.beta.threads.create({
-    messages: [
-      {
-        role: "user",
-        content: message,
-      },
-    ],
-  });
-
-  return thread.id;
+  return thread;
 }
 
-export async function DemoChat(message: string) {
-  const messages: ChatCompletionMessageParam[] = [
-    {
-      role: "system",
-      content:
-        "Don't make assumptions about what values to plug into functions and functions arguments. Ask for clarification if a user request is ambiguous or no argument argument is provided which is required.",
-    },
-  ];
-
-  messages.push({ role: "user", content: message });
-  const completion = await openAi.chat.completions.create({
-    messages: messages,
-    model: "gpt-3.5-turbo",
-    tools: tools,
+export async function addMessageToThread(threadId: string, message: string) {
+  const response = await openAi.beta.threads.messages.create(threadId, {
+    role: "user",
+    content: message,
   });
 
-  return completion.choices[0].message;
+  return response;
+}
+
+export async function runAssistant(threadId: string) {
+  const response = await openAi.beta.threads.runs.create(threadId, {
+    assistant_id: process.env.OPEN_AI_ASSISTANT_ID || "",
+  });
+
+  return response;
+}
+
+export async function cancelRun(threadId: string, runId: string) {
+  const response = await openAi.beta.threads.runs.cancel(threadId, runId);
+
+  return response;
+}
+
+export async function call_required_function(
+  toolCalls: RequiredActionFunctionToolCall[],
+  threadId: string,
+  runId: string
+) {
+  const controller = new IssueController();
+  const outputs: RunSubmitToolOutputsParams.ToolOutput[] = [];
+
+  for (const toolCall of toolCalls) {
+    const functionName = toolCall.function.name;
+    const args = JSON.parse(toolCall.function.arguments);
+
+    if (functionName === "get_x_type_of_issues") {
+      const output = await controller.get_x_type_of_issues(args);
+      outputs.push({
+        tool_call_id: toolCall.id,
+        output: JSON.stringify(output),
+      });
+    } else if (functionName === "create_issue") {
+      const output = await controller.createIssue(args);
+      outputs.push({
+        tool_call_id: toolCall.id,
+        output: JSON.stringify(output),
+      });
+    } else if (functionName === "update_issue") {
+      const output = await controller.updateIssue(args.id, {
+        title: args.title,
+        description: args.description,
+        status: args.status,
+      });
+      outputs.push({
+        tool_call_id: toolCall.id,
+        output: JSON.stringify(output),
+      });
+    } else {
+      throw {
+        message: "Unknown Function",
+      };
+    }
+  }
+
+  await openAi.beta.threads.runs.submitToolOutputs(threadId, runId, {
+    tool_outputs: outputs,
+  });
+}
+
+export async function waitForRunCompletion(runId: string, threadId: string) {
+  let isRunCompleted = false;
+  while (!isRunCompleted) {
+    const response = await openAi.beta.threads.runs.retrieve(threadId, runId);
+    if (response.status === "completed") {
+      isRunCompleted = true;
+      const messages = await processThreadMessages(threadId);
+      return messages;
+    } else if (response.status === "requires_action") {
+      if (!response.required_action) {
+        isRunCompleted = true;
+        return;
+      }
+      await call_required_function(
+        response.required_action?.submit_tool_outputs.tool_calls,
+        threadId,
+        runId
+      );
+    }
+  }
+}
+
+export async function retrieveThread(id: string) {
+  const thread = await openAi.beta.threads.messages.list(id);
+
+  return thread;
+}
+
+export async function processThreadMessages(threadId: string) {
+  const response = await openAi.beta.threads.messages.list(threadId);
+
+  const messages = response.data.map((data) => {
+    return {
+      role: data.role,
+      content: (data.content[0] as MessageContentText).text.value,
+    };
+  });
+
+  return messages;
 }

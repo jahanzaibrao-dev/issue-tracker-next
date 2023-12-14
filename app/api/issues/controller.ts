@@ -21,6 +21,24 @@ export class IssueController {
     return issues;
   };
 
+  get_x_type_of_issues = async ({ status }: { status: any }) => {
+    console.log("inside type issue function");
+    if (status !== "all" && !Object.values(IssueStatus).includes(status)) {
+      return {
+        gptResponse: `${status} is not a valid issue status. Valid issue statuses are Open, Resolved and In_progress`,
+      };
+    }
+
+    const issues =
+      status === "all"
+        ? await this.getAllIssues()
+        : await this.getIssuesOfSpecificStatus(status);
+
+    return {
+      issues,
+    };
+  };
+
   getSingleIssue = async (id: number) => {
     const issue = await prisma.issue.findUnique({ where: { id } });
 
