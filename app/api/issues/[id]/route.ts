@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { IssueController } from "../controller";
 import { IssueIdValidation, editIssueValidation } from "@/app/validations";
+import { getServerSession } from "next-auth";
 
 const controller = new IssueController();
 
@@ -8,6 +9,10 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const session = await getServerSession();
+  if (!session) {
+    NextResponse.json("UnAuthorized", { status: 401 });
+  }
   try {
     const id = parseInt(params.id);
     const validation = IssueIdValidation.safeParse({ id });
@@ -24,6 +29,10 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const session = await getServerSession();
+  if (!session) {
+    NextResponse.json("UnAuthorized", { status: 401 });
+  }
   try {
     const id = parseInt(params.id);
     const validation = IssueIdValidation.safeParse({ id });
@@ -40,6 +49,10 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const session = await getServerSession();
+  if (!session) {
+    NextResponse.json("UnAuthorized", { status: 401 });
+  }
   try {
     const id = parseInt(params.id);
     const idValidation = IssueIdValidation.safeParse({ id });

@@ -2,7 +2,7 @@ import React from "react";
 
 const AboutPage = () => {
   return (
-    <div>
+    <div className="mt-14">
       <h1>Welcome to the Epicenter of Issue Resolution! 🚀</h1>
       <p>
         Unleash the power of collaboration with our cutting-edge Issue Tracker

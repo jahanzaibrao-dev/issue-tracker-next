@@ -21,6 +21,30 @@ export class IssueController {
     return issues;
   };
 
+  get_x_type_of_issues = async ({ status }: { status: any }) => {
+    if (status !== "all" && !Object.values(IssueStatus).includes(status)) {
+      return {
+        gptResponse: `${status} is not a valid issue status. Valid issue statuses are Open, Resolved and In_progress`,
+      };
+    }
+
+    const issues =
+      status === "all"
+        ? await this.getAllIssues()
+        : await this.getIssuesOfSpecificStatus(status);
+
+    return {
+      issues: issues.map((issue) => {
+        return {
+          title: issue.title,
+          description: issue.description,
+          id: issue.id,
+          status: issue.status,
+        };
+      }),
+    };
+  };
+
   getSingleIssue = async (id: number) => {
     const issue = await prisma.issue.findUnique({ where: { id } });
 
@@ -31,6 +55,12 @@ export class IssueController {
     }
 
     return issue;
+  };
+
+  getIssuesOfSpecificStatus = async (status: IssueStatus) => {
+    const issues = await prisma.issue.findMany({ where: { status } });
+
+    return issues;
   };
 
   deleteIssue = async (id: number) => {

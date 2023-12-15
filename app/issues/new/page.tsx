@@ -13,6 +13,7 @@ import Loader from "@/app/components/Loader";
 import { useRouter } from "next/navigation";
 import { createIssue } from "@/app/services/issue";
 import dynamic from "next/dynamic";
+import ErrorCallout from "@/app/components/ErrorCallout";
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
   ssr: false,
 });
@@ -64,14 +65,7 @@ const NewIssuePage = () => {
     <div>
       {isLoading && <Loader />}
       <Card className="shadow-lg p-5 max-w-xl m-auto">
-        {error && (
-          <Callout.Root className="mb-3">
-            <Callout.Icon>
-              <AiOutlineInfoCircle color="red" />
-            </Callout.Icon>
-            <Callout.Text color="red">{error}</Callout.Text>
-          </Callout.Root>
-        )}
+        {error && <ErrorCallout error={error} />}
         <form
           className="space-y-5"
           onSubmit={handleSubmit((data) => submitIssue(data))}
