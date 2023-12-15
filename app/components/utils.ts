@@ -11,6 +11,10 @@ export const navItems = [
     href: "/about",
   },
   {
+    label: "Assistant",
+    href: "/assistant",
+  },
+  {
     label: "Logout",
     href: "",
     onClick: () => {

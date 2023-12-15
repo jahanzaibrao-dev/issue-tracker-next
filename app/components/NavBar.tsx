@@ -14,7 +14,7 @@ interface Props {
 const NavBar = ({ session }: Props) => {
   const currentPath = usePathname();
   return (
-    <nav className="mb-5 border-b h-14 px-5 flex items-center space-x-6 ">
+    <nav className="mb-5 border-b h-14 w-full bg-white px-5 fixed z-10 flex items-center space-x-6 ">
       <ul className="flex items-center space-x-6">
         <Link href={"/"}>
           <AiFillBug size={30} />

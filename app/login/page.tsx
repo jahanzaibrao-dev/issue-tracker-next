@@ -1,4 +1,3 @@
-import { Card, Heading } from "@radix-ui/themes";
 import React from "react";
 import LoginForm from "./form";
 import { getServerSession } from "next-auth";
@@ -10,14 +9,7 @@ const LoginPage = async () => {
   if (session) {
     redirect("/");
   }
-  return (
-    <Card className="shadow-lg space-y-5 p-5 max-w-lg m-auto">
-      <Heading color="purple" className="mb-11" align="center" size="8">
-        Login
-      </Heading>
-      <LoginForm />
-    </Card>
-  );
+  return <LoginForm />;
 };
 
 export default LoginPage;

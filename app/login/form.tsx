@@ -10,6 +10,7 @@ import { Button, TextField } from "@radix-ui/themes";
 import ErrorMessage from "../components/ErrorMessage";
 import ErrorCallout from "../components/ErrorCallout";
 import { signIn } from "next-auth/react";
+import { Card, Heading } from "@radix-ui/themes";
 
 export type LoginUserForm = z.infer<typeof loginValidation>;
 
@@ -58,40 +59,48 @@ const LoginForm = () => {
     <>
       {isLoading && <Loader />}
 
-      {error && <ErrorCallout error={error} />}
+      <Card className="shadow-lg space-y-5 p-5 max-w-lg m-auto  mt-32">
+        <Heading color="purple" className="mb-11" align="center" size="8">
+          Login
+        </Heading>
 
-      <form
-        className="space-y-5"
-        onSubmit={handleSubmit((data) => submitLogin(data))}
-      >
-        <div>
-          <label>Email:</label>
-          <TextField.Root>
-            <TextField.Input
-              size="3"
-              placeholder="johnsnow@gmail.com"
-              {...register("email")}
-            ></TextField.Input>
-          </TextField.Root>
-          {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
-        </div>
+        {error && <ErrorCallout error={error} />}
 
-        <div>
-          <label>Password:</label>
-          <TextField.Root>
-            <TextField.Input
-              size="3"
-              placeholder=""
-              {...register("password")}
-              type="password"
-            ></TextField.Input>
-          </TextField.Root>
-          {errors.password && (
-            <ErrorMessage>{errors.password.message}</ErrorMessage>
-          )}
-        </div>
-        <Button size="3">Login</Button>
-      </form>
+        <form
+          className="space-y-5"
+          onSubmit={handleSubmit((data) => submitLogin(data))}
+        >
+          <div>
+            <label>Email:</label>
+            <TextField.Root>
+              <TextField.Input
+                size="3"
+                placeholder="johnsnow@gmail.com"
+                {...register("email")}
+              ></TextField.Input>
+            </TextField.Root>
+            {errors.email && (
+              <ErrorMessage>{errors.email.message}</ErrorMessage>
+            )}
+          </div>
+
+          <div>
+            <label>Password:</label>
+            <TextField.Root>
+              <TextField.Input
+                size="3"
+                placeholder=""
+                {...register("password")}
+                type="password"
+              ></TextField.Input>
+            </TextField.Root>
+            {errors.password && (
+              <ErrorMessage>{errors.password.message}</ErrorMessage>
+            )}
+          </div>
+          <Button size="3">Login</Button>
+        </form>
+      </Card>
     </>
   );
 };

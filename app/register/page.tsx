@@ -12,7 +12,7 @@ const RegisterPage = async () => {
     redirect("/");
   }
   return (
-    <Card className="shadow-lg space-y-5 p-5 max-w-lg m-auto">
+    <Card className="shadow-lg space-y-5 p-5 max-w-lg m-auto  mt-32">
       <Heading color="purple" className="mb-11" align="center" size="8">
         Sign Up
       </Heading>

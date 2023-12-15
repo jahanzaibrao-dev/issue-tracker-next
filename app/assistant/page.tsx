@@ -3,11 +3,7 @@ import React from "react";
 import ChatBox from "./ChatBox";
 
 const AssistantPage = () => {
-  return (
-    <Card className="shadow-lg space-y-5 p-5 max-w-lg m-auto">
-      <ChatBox />
-    </Card>
-  );
+  return <ChatBox />;
 };
 
 export default AssistantPage;

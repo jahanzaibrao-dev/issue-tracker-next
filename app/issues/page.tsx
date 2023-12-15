@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@radix-ui/themes";
 
 import Link from "next/link";
-import axios from "axios";
 import Loader from "../components/Loader";
 import IssueCard from "../components/IssueCard";
 import { deleteIssue, getAllIssues } from "../services/issue";
@@ -44,7 +43,7 @@ const IssuesPage = () => {
   };
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 mt-14">
       {isLoading && <Loader />}
       <Button ml="auto" size="3">
         <Link className="flex" href="/issues/new">

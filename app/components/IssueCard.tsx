@@ -6,7 +6,6 @@ import remarkGfm from "remark-gfm";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import DialogButton from "./DialogButton";
-import EditIssueForm from "./EditIssueForm";
 import { IssueStatus } from "../api/issues/types";
 import { getBadgeColor } from "./utils";
 import { useRouter } from "next/navigation";

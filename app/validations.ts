@@ -22,6 +22,10 @@ export const loginValidation = z.object({
   password: z.string().min(1, "password is required"),
 });
 
+export const gptMessageValidation = z.object({
+  message: z.string().min(1, "Please enter something"),
+});
+
 export const IssueIdValidation = z.object({
   id: z.number().min(1, "Invalid issue id"),
 });

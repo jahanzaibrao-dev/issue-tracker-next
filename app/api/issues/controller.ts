@@ -22,7 +22,6 @@ export class IssueController {
   };
 
   get_x_type_of_issues = async ({ status }: { status: any }) => {
-    console.log("inside type issue function");
     if (status !== "all" && !Object.values(IssueStatus).includes(status)) {
       return {
         gptResponse: `${status} is not a valid issue status. Valid issue statuses are Open, Resolved and In_progress`,
@@ -35,7 +34,14 @@ export class IssueController {
         : await this.getIssuesOfSpecificStatus(status);
 
     return {
-      issues,
+      issues: issues.map((issue) => {
+        return {
+          title: issue.title,
+          description: issue.description,
+          id: issue.id,
+          status: issue.status,
+        };
+      }),
     };
   };
 
