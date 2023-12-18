@@ -10,7 +10,12 @@ export class IssueController {
       },
     });
 
-    return newIssue;
+    return {
+      title: newIssue.title,
+      description: newIssue.description,
+      id: newIssue.id,
+      status: newIssue.status,
+    };
   };
 
   getAllIssues = async () => {
@@ -64,27 +69,17 @@ export class IssueController {
   };
 
   deleteIssue = async (id: number) => {
-    const issue = await prisma.issue.findUnique({ where: { id } });
-    if (!issue) {
-      throw {
-        message: "Issue with this id not found",
-      };
-    }
+    const issue = await this.getSingleIssue(id);
 
     await prisma.issue.delete({ where: { id } });
 
     return {
-      message: "Issue deleted successfully!",
+      message: `Issue with title ${issue.title} deleted successfully!`,
     };
   };
 
   updateIssue = async (id: number, payload: editIssuePayload) => {
-    const issue = await prisma.issue.findUnique({ where: { id } });
-    if (!issue) {
-      throw {
-        message: "Issue with this id not found",
-      };
-    }
+    const issue = await this.getSingleIssue(id);
 
     const updatedIssue = await prisma.issue.update({
       where: { id },
@@ -93,7 +88,13 @@ export class IssueController {
 
     return {
       message: "Issue updated successfully!",
-      issue: updatedIssue,
+      issue: {
+        title: updatedIssue.title,
+        description: updatedIssue.description,
+        id: updatedIssue.id,
+        status: updatedIssue.status,
+        updatedAt: updatedIssue.updatedAt,
+      },
     };
   };
 

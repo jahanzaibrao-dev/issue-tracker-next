@@ -52,33 +52,41 @@ export async function call_required_function(
     const functionName = toolCall.function.name;
     const args = JSON.parse(toolCall.function.arguments);
 
-    if (functionName === "get_x_type_of_issues") {
-      const output = await controller.get_x_type_of_issues(args);
-      outputs.push({
-        tool_call_id: toolCall.id,
-        output: JSON.stringify(output),
-      });
-    } else if (functionName === "create_issue") {
-      const output = await controller.createIssue(args);
-      outputs.push({
-        tool_call_id: toolCall.id,
-        output: JSON.stringify(output),
-      });
-    } else if (functionName === "update_issue") {
-      const output = await controller.updateIssue(args.id, {
-        title: args.title,
-        description: args.description,
-        status: args.status,
-      });
-      outputs.push({
-        tool_call_id: toolCall.id,
-        output: JSON.stringify(output),
-      });
-    } else {
-      throw {
-        message: "Unknown Function",
-      };
+    let output;
+
+    switch (functionName) {
+      case "get_x_type_of_issues":
+        output = await controller.get_x_type_of_issues(args);
+        break;
+
+      case "create_issue":
+        output = await controller.createIssue(args);
+        break;
+
+      case "update_issue":
+        output = await controller.updateIssue(args.id, {
+          title: args.title,
+          description: args.description,
+          status: args.status,
+        });
+        break;
+
+      case "delete_issue":
+        output = await controller.deleteIssue(args.id);
+
+        break;
+
+      default:
+        throw {
+          message: "Unknown Function",
+        };
+        break;
     }
+
+    outputs.push({
+      tool_call_id: toolCall.id,
+      output: JSON.stringify(output),
+    });
   }
 
   await openAi.beta.threads.runs.submitToolOutputs(threadId, runId, {

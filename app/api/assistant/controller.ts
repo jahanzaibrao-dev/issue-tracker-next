@@ -8,7 +8,7 @@ import {
   retrieveThread,
   runAssistant,
   waitForRunCompletion,
-} from "../utils/customGpt";
+} from "../utils/assistant";
 import prisma from "@/prisma/client";
 
 export class GptController {

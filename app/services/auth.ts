@@ -6,6 +6,6 @@ export const registerUser = (data: RegisterUserForm) => {
 };
 
 export const askChatGPT = async (userMessage: string) => {
-  const response = await axios.post("/api/askGpt", { message: userMessage });
+  const response = await axios.post("/api/assistant", { message: userMessage });
   return response;
 };
